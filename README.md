@@ -1,7 +1,7 @@
 # PARTH&SPACE 🚀
 
 > A 2D Space Shooter built with OpenGL / FreeGLUT in C++  
-> Computer Graphics (CSE411) — University Project
+> Computer Graphics (CSE422) — University Project
 
 ---
 
