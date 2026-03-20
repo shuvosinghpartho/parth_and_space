@@ -142,4 +142,4 @@ Uses a decision parameter `p = 1 - r` and 8-way symmetry to plot all octants sim
 
 ## Author
 
-**Shuvo Singh Partho** — CSE422 Computer Graphics Lab,Project# openGL
+**Shuvo Singh Partho** — CSE422 Computer Graphics Lab, Project, openGL
