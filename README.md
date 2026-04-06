@@ -1,51 +1,72 @@
-# PARTH&SPACE 🚀
+<div align="center">
 
-> A 2D Space Shooter built with OpenGL / FreeGLUT in C++  
-> Computer Graphics (CSE422) — University Project
+```
+██████╗  █████╗ ██████╗ ████████╗██╗  ██╗    ██╗
+██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝██║  ██║   ██╔╝
+██████╔╝███████║██████╔╝   ██║   ███████║  ██╔╝
+██╔═══╝ ██╔══██║██╔══██╗   ██║   ██╔══██║ ██╔╝
+██║     ██║  ██║██║  ██║   ██║   ██║  ██║██╔╝
+╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝╚═╝  & SPACE
+```
+
+**A 2D Space Shooter built entirely from scratch with OpenGL / FreeGLUT in C++**
+
+[![Language](https://img.shields.io/badge/Language-C%2B%2B17-blue?style=flat-square&logo=cplusplus)](https://isocpp.org/)
+[![Graphics](https://img.shields.io/badge/Graphics-OpenGL%202.x%20%2F%20FreeGLUT-orange?style=flat-square)](https://www.opengl.org/)
+[![Course](https://img.shields.io/badge/Course-CSE422%20Computer%20Graphics-purple?style=flat-square)](https://github.com)
+[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-green?style=flat-square)](https://github.com)
+[![License](https://img.shields.io/badge/License-MIT-lightgrey?style=flat-square)](LICENSE)
+
+<br/>
+
+*Pilot a fighter craft through endless waves of alien enemies, rotating asteroid fields,*
+*and multi-phase boss encounters — all rendered with hand-implemented rasterization algorithms.*
+
+</div>
 
 ---
 
-## Overview
+## ✨ Highlights
 
-**PARTH&SPACE** is an interactive 2D space shooter where you pilot a fighter craft through endless waves of alien enemies and rotating asteroid fields. The project demonstrates core computer graphics concepts — manual rasterization algorithms, 2D transformations, animation, and real-time user interaction — all implemented from scratch using OpenGL primitives.
+> Every pixel, circle, and line on screen is drawn using **DDA**, **Bresenham**, or **Midpoint Circle** algorithms — no geometry shortcuts, no GPU shortcuts.
 
----
-
-## Features
-
-| Category | Implementation |
-|---|---|
-| **Graphics Primitives** | Points (star-field), Lines (lasers, HUD), Polygons (ship/enemy hulls), Circles (planet, bullets, explosions) |
-| **DDA Line Algorithm** | Laser beams, engine exhaust trails, wing detail lines |
-| **Bresenham Line Algorithm** | Shield grid segments, HUD separator bar, enemy wing stripes |
-| **Midpoint Circle Algorithm** | Planet body & atmosphere, bullet glow rings, explosion burst rings |
-| **Translation** | Ship movement, enemy drift, bullet travel |
-| **Rotation** | Ship banking on turn, enemy wobble, asteroid spin |
-| **Scaling** | Ship spawn-in pulse, explosion ring grow-out |
-| **Animation** | Parallax star-field scroll, sine-wave enemy drift, continuous asteroid rotation, engine flicker |
-| **Keyboard Input** | Full 8-direction ship movement + fire + shield + pause/restart |
+- 🚀 **4 distinct combat zones** — Deep Space, Asteroid Belt, Nebula, and Boss Arena
+- 🤖 **5 enemy AI archetypes** — Sine-wave, Zigzag, Tracker, Swarm, and Kamikaze
+- 👾 **3-phase boss encounters** that escalate with shield orbs and attack patterns
+- 💥 **Particle explosion system** with real physics — gravity, friction, velocity
+- ⚡ **6 power-up types** — Rapid Fire, Shield, Slow-Mo, Laser, Homing Missiles, Bomb
+- 🎯 **Combo multiplier system** — chain kills to multiply your score up to 5×
+- 🌌 **Parallax star field** with 3 depth layers and zone-adaptive tinting
+- 📡 **HUD radar**, trail renderer, screen shake, and neon glow effects
+- 💾 **Persistent high score** saved to disk across sessions
 
 ---
 
-## Gameplay
+## 🎮 Gameplay
 
-You start with **3 lives** and face waves of enemy ships descending from above. Enemies move in a sine-wave pattern — they get faster and more numerous with each wave. Asteroids appear from Wave 2 onward. Your goal is to survive as long as possible and maximise your score.
+You start with **3 lives** and face escalating waves of enemy ships. Every 5 waves summons a **multi-phase Boss** with shield orbs, burst fire patterns, and an enraged mode. Your goal: survive as long as possible and maximize your score.
 
-**Lose a life when:**
-- An enemy ship reaches the bottom of the screen (flies past you)
-- An enemy or asteroid collides with your ship
+**You lose a life when:**
+- An enemy reaches the bottom of the screen
+- An enemy or asteroid collides with your ship (without shield)
 
-**Game over** when all 3 lives are lost.
+**Game Over** when all 3 lives are lost.
 
-### Scoring
+### 🏆 Scoring
 
-| Event | Points |
-|---|---|
-| Destroy an enemy ship | +100 |
-| Destroy an asteroid | +50 |
-| Clear a full wave | +250 |
+| Event | Base Points | Combo Bonus |
+|---|---|---|
+| Destroy enemy ship | `+100` | Up to **×5** with combos |
+| Destroy asteroid | `+50` | Up to **×2** with combos |
+| Collect power-up | `+25` | — |
+| Clear full wave | `+250` | — |
+| Boss defeated | `+1000` | — |
 
-### Controls
+> **Combo tip:** Chain kills without getting hit to stack your multiplier. The combo counter resets on collision.
+
+---
+
+## 🕹️ Controls
 
 | Key | Action |
 |---|---|
@@ -53,19 +74,100 @@ You start with **3 lives** and face waves of enemy ships descending from above. 
 | `X` / `↓` | Move Down |
 | `A` / `←` | Move Left |
 | `D` / `→` | Move Right |
-| `SPACE` | Fire laser |
-| `S` | Activate shield (~1.5 s, 5 s cooldown) |
+| `ENTER` / `F1` | Fire laser |
+| `S` | Activate shield (~1.5 s active, 5 s cooldown) |
 | `P` | Pause / Resume |
+| `TAB` | Settings menu |
 | `R` | Restart |
 | `ESC` | Quit |
 
-> **Shield tip:** The shield absorbs all collisions while active. Watch the bottom status bar — it shows when the shield is ready.
+> **Shield tip:** Absorbs all collisions while active. Watch the bottom status bar — it shows the cooldown state. A shield power-up instantly recharges it.
 
 ---
 
-## Build & Run
+## ⚙️ Power-Ups
 
-### Linux
+Enemies randomly drop glowing power-ups on death. Each one visually tints your ship and trail.
+
+| Icon | Type | Effect | Duration |
+|---|---|---|---|
+| 🟠 | **Rapid Fire** | Doubles fire rate; orange trail | 5 s |
+| 🔵 | **Shield** | Instant shield recharge | Instant |
+| 🟣 | **Slow-Mo** | Halves game speed; purple trail | 3 s |
+| 🩷 | **Laser** | Widens hit detection; pink tint | 3 s |
+| 🟢 | **Homing** | Bullets track nearest enemy; green trail | 5 s |
+| 💣 | **Bomb** | Clears all enemies and asteroids on screen | Instant |
+
+---
+
+## 🌌 Combat Zones
+
+The zone transitions automatically as waves progress, each with a unique background palette, nebula color, and ring tint.
+
+| Zone | Waves | Unique Hazard |
+|---|---|---|
+| **Deep Space** | 1–4 | Animated planet with orbiting moon |
+| **Asteroid Belt** | 5–9 | Dense rotating asteroids |
+| **Nebula** | 10–14 | Reduced visibility, fast enemies |
+| **Boss Arena** | Every 5th wave | Animated black hole; boss spawn |
+
+---
+
+## 🤖 Enemy AI Types
+
+| AI Mode | Behaviour |
+|---|---|
+| `AI_SINE` | Classic sine-wave drift downward |
+| `AI_ZIGZAG` | Sharp horizontal direction reversals |
+| `AI_TRACKER` | Actively homes toward the player |
+| `AI_SWARM` | Moves in coordinated group formation |
+| `AI_KAMIKAZE` | High-speed direct dive at player |
+
+All enemies have an **HP bar**, a flash-on-hit effect, and can return fire in later waves.
+
+---
+
+## 🛠️ Algorithm Details
+
+All rendering is done using **custom implementations of classic rasterization algorithms** — no `glDrawCircle`, no trigonometric shortcuts for lines.
+
+### DDA Line Algorithm
+Computes increments `(dx/steps, dy/steps)` in floating-point and steps through each pixel. Used for laser beams, engine exhaust trails, and ship wing detail lines. A `glowLine()` wrapper stacks multiple offset passes to produce neon bloom.
+
+### Bresenham's Line Algorithm
+Pure integer arithmetic with an error accumulator — zero floating-point math. Used for HUD separator bars, shield grid segments, enemy wing stripes, planetary ring bands, and all UI borders where hard-edged precision matters.
+
+### Midpoint Circle Algorithm
+Uses a decision parameter `p = 1 − r` and **8-way symmetry** to plot all octants in O(r) time. Zero `sin`/`cos` involved. Every circle in the game — planet body, atmosphere halo, bullet glow rings, explosion bursts, shield bubble — is drawn this way. A `glowCircle()` wrapper layers semi-transparent rings outward to simulate neon bloom.
+
+### Particle Physics System
+Each explosion spawns 20–38 particles with randomised velocity vectors, per-particle gravity, and a friction coefficient. Particles fade and shrink over their lifetime — no sprite sheets, all computed per frame.
+
+---
+
+## 📐 Transformations Used
+
+| Transform | Applied To |
+|---|---|
+| **Translation** | Ship movement, enemy drift, bullet travel, power-up bobbing |
+| **Rotation** | Ship banking on turn, enemy wobble, asteroid spin, boss entry sweep |
+| **Scaling** | Ship spawn-in pulse, explosion ring grow-out, boss scale animation |
+
+---
+
+## 🚀 Build & Run
+
+### Prerequisites
+
+| Platform | Dependency |
+|---|---|
+| Linux | `freeglut3-dev` |
+| Windows | MinGW-w64 + FreeGLUT DLL |
+| macOS | FreeGLUT via Homebrew |
+
+---
+
+### 🐧 Linux
 
 ```bash
 # Install dependency
@@ -78,68 +180,79 @@ g++ -o parthnspace parthnspace.cpp -lGL -lGLU -lglut -lm
 ./parthnspace
 ```
 
-### Windows (MinGW + FreeGLUT)
+---
 
-1. Install [MinGW-w64](https://www.mingw-w64.org/) and add it to PATH
+### 🪟 Windows (MinGW + FreeGLUT)
+
+1. Install [MinGW-w64](https://www.mingw-w64.org/) and add it to your `PATH`
 2. Download [FreeGLUT for MinGW](https://www.transmissionzero.co.uk/software/freeglut-devel/)
-3. Place `freeglut.h` in `MinGW/include/GL/`, `libfreeglut.a` in `MinGW/lib/`, and `freeglut.dll` next to the `.cpp` file
-4. Compile:
+3. Place the headers and libs:
+   - `freeglut.h` → `MinGW/include/GL/`
+   - `libfreeglut.a` → `MinGW/lib/`
+   - `freeglut.dll` → same folder as the `.cpp` file
 
 ```bash
 g++ -o parthnspace.exe parthnspace.cpp -lfreeglut -lopengl32 -lglu32 -lm
 parthnspace.exe
 ```
 
-### macOS
+---
+
+### 🍎 macOS
 
 ```bash
 # Install FreeGLUT via Homebrew
 brew install freeglut
 
-# Compile
+# Compile (Apple Silicon)
 g++ -o parthnspace parthnspace.cpp \
-    -I/opt/homebrew/include \
-    -L/opt/homebrew/lib \
+    -I$(brew --prefix)/include \
+    -L$(brew --prefix)/lib \
     -lfreeglut -lGL -lGLU -lm
 
 # Run
 ./parthnspace
 ```
 
-> On newer macOS (Apple Silicon), replace `/opt/homebrew` with the output of `brew --prefix` if paths differ.
+> On Intel Macs, replace `$(brew --prefix)` with `/usr/local` if needed.
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 ```
-parthnspace.cpp     # Single-file implementation (all logic, algorithms, rendering)
-README.md
+parthnspace/
+├── parthnspace.cpp     # Single-file implementation — all logic, algorithms, rendering
+└── README.md
 ```
 
----
-
-## Algorithm Details
-
-### DDA Line Drawing
-Computes increments `(dx/steps, dy/steps)` in floating point and steps through each pixel. Simple and clean, used for smooth beam rendering.
-
-### Bresenham Line Drawing
-Uses only integer arithmetic with an error accumulator. More efficient than DDA; used for grid lines and HUD elements where precision matters.
-
-### Midpoint Circle Drawing
-Uses a decision parameter `p = 1 - r` and 8-way symmetry to plot all octants simultaneously in O(r) steps. All circles in the game — planet, bullet glow, explosions — are drawn this way with no `sin`/`cos` involved.
+The entire game — graphics primitives, game logic, AI, UI, particle system, and audio-free SFX feedback — lives in a single `.cpp` file (~2000 lines), intentionally kept as a self-contained academic submission.
 
 ---
 
-## Requirements
+## 📋 Requirements
 
-- C++17 or later
-- OpenGL 2.x
-- FreeGLUT 3.x
+| Component | Minimum Version |
+|---|---|
+| C++ Standard | C++17 |
+| OpenGL | 2.x |
+| FreeGLUT | 3.x |
+| Compiler | GCC 9+ / Clang 10+ / MSVC 2019+ |
 
 ---
 
-## Author
+## 👨‍💻 Author
 
-**Shuvo Singh Partho** — CSE422 Computer Graphics Lab, Project, openGL
+**Shuvo Singh Partho**
+CSE422 — Computer Graphics Lab & Project
+OpenGL / FreeGLUT / C++
+
+---
+
+<div align="center">
+
+*Built from scratch. No game engine. No shortcuts. Just math.*
+
+⭐ If you found this useful or interesting, consider starring the repository!
+
+</div>
