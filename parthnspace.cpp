@@ -1879,7 +1879,7 @@ void display() {
         }
         glPointSize(1);
     }
-
+    
     drawPlayerTrail();
     drawExps();
     updateDrawHitRings();
