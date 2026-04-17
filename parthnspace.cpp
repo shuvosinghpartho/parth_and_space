@@ -1235,7 +1235,8 @@ void drawMenu() {
     txtC(W/2,312,"Collect glowing power-ups for upgrades!",GLUT_BITMAP_HELVETICA_12);
     txtC(W/2,296,"Survive waves, defeat the boss every 5 waves",GLUT_BITMAP_HELVETICA_12);
     glColor4f(0.3f,0.4f,0.6f,0.5f);
-    txtC(W/2,266,"Author: Shuvo Singh Partho  |  OpenGL / FreeGLUT  |  C++",GLUT_BITMAP_HELVETICA_12);
+    // txtC(W/2,266,"Author: Shuvo Singh Partho  |  OpenGL / FreeGLUT  |  C++",GLUT_BITMAP_HELVETICA_12);
+
 }
 
 // Settings Screen 
@@ -1312,53 +1313,69 @@ void drawPauseOverlay() {
 
 // Game Over Screen
 void drawOver() {
-    glColor4f(0.04f,0.0f,0.0f,0.80f);
+    // Dark overlay
+    glColor4f(0,0,0,0.75f);
     glBegin(GL_QUADS); glVertex2f(0,0); glVertex2f(W,0); glVertex2f(W,H); glVertex2f(0,H); glEnd();
 
     float gp = 0.5f+0.5f*sinf(menuAnim*0.07f);
-    glColor4f(0.07f,0.02f,0.02f,0.92f);
+
+    // Panel
+    glColor4f(0.06f,0.02f,0.02f,0.96f);
     glBegin(GL_QUADS);
-        glVertex2f(200,240); glVertex2f(700,240); glVertex2f(700,490); glVertex2f(200,490);
+        glVertex2f(250,220); glVertex2f(650,220); glVertex2f(650,500); glVertex2f(250,500);
     glEnd();
-    glColor4f(0.9f+gp*0.1f,0.15f,0.25f,0.7f+gp*0.2f);
-    bres(200,240,700,240); bres(200,490,700,490); bres(200,240,200,490); bres(700,240,700,490);
-    glColor3f(1.0f,0.3f,0.4f);
-    bres(200,490,225,490); bres(200,490,200,465); bres(700,490,675,490); bres(700,490,700,465);
-    bres(200,240,225,240); bres(200,240,200,265); bres(700,240,675,240); bres(700,240,700,265);
+    glColor4f(0.85f,0.15f,0.2f,0.6f+0.3f*gp);
+    bres(250,220,650,220); bres(250,500,650,500);
+    bres(250,220,250,500); bres(650,220,650,500);
 
-    txtWave(W/2,468,"GAME  OVER",1.0f,0.2f+gp*0.1f,0.3f,5.0f,menuAnim*0.08f);
-    glColor4f(0.7f,0.2f,0.3f,0.45f); bres(240,445,660,445);
+    // GAME OVER title
+    txtWave(W/2,470,"GAME  OVER",1.0f,0.15f,0.2f,4.0f,menuAnim*0.07f,GLUT_BITMAP_TIMES_ROMAN_24);
 
-    glColor3f(0.9f,0.8f,0.3f); txtC(W/2,420,"FINAL SCORE",GLUT_BITMAP_HELVETICA_12);
-    glColor3f(1.0f,0.9f,0.4f); txtC(W/2,400,to_string(score),GLUT_BITMAP_TIMES_ROMAN_24);
+    // Divider
+    glColor4f(0.6f,0.15f,0.2f,0.4f); bres(280,448,620,448);
 
-    if (score > highScore) {
-        glColor4f(1.0f,0.9f,0.1f,0.5f+0.5f*sinf(menuAnim*0.12f));
-        txtC(W/2,378,"★  NEW HIGH SCORE!  ★",GLUT_BITMAP_HELVETICA_18);
+    // Score
+    glColor3f(0.7f,0.65f,0.25f); txtC(W/2,420,"SCORE",GLUT_BITMAP_HELVETICA_12);
+    glColor3f(1.0f,0.88f,0.3f);  txtC(W/2,396,to_string(score),GLUT_BITMAP_TIMES_ROMAN_24);
+
+    // High score line
+    if (score >= highScore) {
+        glColor4f(1.0f,0.85f,0.1f,0.55f+0.4f*sinf(menuAnim*0.13f));
+        txtC(W/2,370,"NEW  BEST!",GLUT_BITMAP_HELVETICA_18);
     } else {
-        glColor3f(0.4f,0.55f,0.8f); txtC(W/2,378,"Best: "+to_string(highScore),GLUT_BITMAP_HELVETICA_12);
+        glColor3f(0.38f,0.5f,0.75f);
+        txtC(W/2,370,"BEST: "+to_string(highScore),GLUT_BITMAP_HELVETICA_18);
     }
-    glColor3f(0.55f,0.7f,0.9f); txtC(W/2,355,"Wave Reached: "+to_string(wave),GLUT_BITMAP_HELVETICA_18);
-    string zoneNames[] = {"Deep Space","Asteroid Belt","Nebula Zone","Boss Arena"};
-    glColor4f(0.45f,0.6f,0.85f,0.7f); txtC(W/2,336,"Zone: "+zoneNames[currentZone],GLUT_BITMAP_HELVETICA_12);
-    glColor4f(0.4f,0.3f,0.6f,0.35f); bres(240,320,660,320);
 
-    float ep = 0.5f+0.5f*sinf(menuAnim*0.1f);
-    glColor4f(0.04f,0.18f+0.06f*ep,0.08f,0.75f);
-    glBegin(GL_QUADS);
-        glVertex2f(265,260); glVertex2f(445,260); glVertex2f(445,305); glVertex2f(265,305);
-    glEnd();
-    glColor4f(0.15f,0.75f+0.2f*ep,0.35f,0.8f);
-    bres(265,260,445,260); bres(265,305,445,305); bres(265,260,265,305); bres(445,260,445,305);
-    glColor3f(0.3f,1.0f,0.55f); txtC(355,277,"[ R ]  Restart",GLUT_BITMAP_HELVETICA_18);
+    // Wave
+    glColor3f(0.5f,0.65f,0.88f);
+    txtC(W/2,342,"WAVE  "+to_string(wave),GLUT_BITMAP_HELVETICA_18);
 
-    glColor4f(0.12f,0.05f,0.05f,0.75f);
+    // Divider
+    glColor4f(0.35f,0.28f,0.55f,0.3f); bres(280,324,620,324);
+
+    // Buttons
+    float ep = 0.5f+0.5f*sinf(menuAnim*0.10f);
+
+    // Restart button
+    glColor4f(0.04f,0.16f+0.06f*ep,0.06f,0.82f);
     glBegin(GL_QUADS);
-        glVertex2f(460,260); glVertex2f(640,260); glVertex2f(640,305); glVertex2f(460,305);
+        glVertex2f(268,268); glVertex2f(438,268); glVertex2f(438,308); glVertex2f(268,308);
     glEnd();
-    glColor4f(0.7f,0.2f,0.25f,0.7f);
-    bres(460,260,640,260); bres(460,305,640,305); bres(460,260,460,305); bres(640,260,640,305);
-    glColor3f(0.9f,0.45f,0.5f); txtC(550,277,"[ ESC ]  Quit",GLUT_BITMAP_HELVETICA_18);
+    glColor4f(0.15f,0.72f+0.2f*ep,0.32f,0.85f);
+    bres(268,268,438,268); bres(268,308,438,308);
+    bres(268,268,268,308); bres(438,268,438,308);
+    glColor3f(0.25f,0.95f,0.5f); txtC(353,281,"[ R ]  RESTART",GLUT_BITMAP_HELVETICA_18);
+
+    // Quit button
+    glColor4f(0.10f,0.04f,0.04f,0.82f);
+    glBegin(GL_QUADS);
+        glVertex2f(458,268); glVertex2f(628,268); glVertex2f(628,308); glVertex2f(458,308);
+    glEnd();
+    glColor4f(0.75f,0.18f,0.22f,0.8f);
+    bres(458,268,628,268); bres(458,308,628,308);
+    bres(458,268,458,308); bres(628,268,628,308);
+    glColor3f(0.95f,0.4f,0.45f); txtC(543,281,"[ ESC ]  QUIT",GLUT_BITMAP_HELVETICA_18);
 }
 
 // Wave / Boss Banner 
