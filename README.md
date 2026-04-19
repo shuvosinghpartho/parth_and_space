@@ -237,6 +237,7 @@ The entire game — graphics primitives, game logic, AI, UI, particle system, an
 ## 👨‍💻 Author
 
 **Shuvo Singh Partho**
+**Nayeem Hasan**
 CSE422 — Computer Graphics Lab & Project
 OpenGL / FreeGLUT / C++
 
