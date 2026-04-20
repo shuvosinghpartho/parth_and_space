@@ -185,6 +185,7 @@ int difficulty = 1;
 bool showRadar = true, showTrails = true;
 
 float planetRot = 0.0f, blackHoleT = 0.0f;
+float sunT = 0.0f, moonT = 0.0f, compactPlanetT = 0.0f;
 
 Boss            boss;
 Bullet          bul[MB];
