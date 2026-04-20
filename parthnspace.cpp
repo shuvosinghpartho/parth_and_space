@@ -186,20 +186,16 @@ bool showRadar = true, showTrails = true;
 
 float planetRot = 0.0f, blackHoleT = 0.0f;
 
-float sunT = 0.0f;
-float moonT = 0.0f;
-float compactPlanetT = 0.0f;
-
-Boss boss;
-Bullet bul[MB];
-Enemy ene[ME];
-Asteroid ast[MA];
-Star stars[NS];
-NeonRing rings[NEB];
-PowerUp pups[NPU];
-EnemyBullet ebul[24];
-HitRing hitRings[16];
-int hitRingIdx = 0;
+Boss            boss;
+Bullet          bul[MB];
+Enemy           ene[ME];
+Asteroid        ast[MA];
+Star            stars[NS];
+NeonRing        rings[NEB];
+PowerUp         pups[NPU];
+EnemyBullet     ebul[24];
+HitRing         hitRings[16];
+int             hitRingIdx = 0;
 vector<Explosion> exps;
 
 deque<TrailNode> playerTrail;
@@ -1829,17 +1825,9 @@ void drawMoon();
 void drawCompactPlanet();
 
 // Main Menu
-void drawMenu()
-{
-    drawBackground();
-    drawNebula();
-    drawStars();
-    drawRings();
-    drawPlanet();
-    drawSun();
-    drawMoon();
-    drawCompactPlanet();
-    drawShip(W / 2, 170, 0, 1.3f);
+void drawMenu() {
+    drawBackground(); drawNebula(); drawStars(); drawRings(); drawPlanet();
+    drawShip(W/2,170,0,1.3f);
 
     float gp = 0.5f + 0.5f * sinf(menuAnim * 0.05f);
 
@@ -1916,14 +1904,15 @@ void drawMenu()
     bres(200, 280, 200, 372);
     bres(700, 280, 700, 372);
 
-    glColor3f(0.55f, 0.75f, 1.0f);
-    txtC(W / 2, 360, "CONTROLS", GLUT_BITMAP_HELVETICA_12);
-    glColor3f(0.6f, 0.75f, 0.9f);
-    txtC(W / 2, 344, "WASD / Arrow Keys  —  Move", GLUT_BITMAP_HELVETICA_12);
-    txtC(W / 2, 328, "ENTER  —  Fire    S  —  Shield    P  —  Pause    R  —  Restart", GLUT_BITMAP_HELVETICA_12);
-    txtC(W / 2, 312, "Collect glowing power-ups for upgrades!", GLUT_BITMAP_HELVETICA_12);
-    txtC(W / 2, 296, "Survive waves, defeat the boss every 5 waves", GLUT_BITMAP_HELVETICA_12);
-    glColor4f(0.3f, 0.4f, 0.6f, 0.5f);
+    glColor3f(0.55f,0.75f,1.0f); txtC(W/2,360,"CONTROLS",GLUT_BITMAP_HELVETICA_12);
+    glColor3f(0.6f,0.75f,0.9f);
+    txtC(W/2,344,"WASD / Arrow Keys  —  Move",GLUT_BITMAP_HELVETICA_12);
+    txtC(W/2,328,"ENTER  —  Fire    S  —  Shield    P  —  Pause    R  —  Restart",GLUT_BITMAP_HELVETICA_12);
+    txtC(W/2,312,"Collect glowing power-ups for upgrades!",GLUT_BITMAP_HELVETICA_12);
+    txtC(W/2,296,"Survive waves, defeat the boss every 5 waves",GLUT_BITMAP_HELVETICA_12);
+    glColor4f(0.3f,0.4f,0.6f,0.5f);
+    // txtC(W/2,266,"Author: Shuvo Singh Partho  |  OpenGL / FreeGLUT  |  C++",GLUT_BITMAP_HELVETICA_12);
+
 }
 
 // Settings Screen
@@ -2165,19 +2154,21 @@ void drawWaveBanner()
 }
 
 // Transition Fade
-void drawTransitionFade()
-{
-    if (transAlpha <= 0)
-        return;
-    glColor4f(0, 0, 0, transAlpha);
-    glBegin(GL_QUADS);
-    glVertex2f(0, 0);
-    glVertex2f(W, 0);
-    glVertex2f(W, H);
-    glVertex2f(0, H);
-    glEnd();
+void drawTransitionFade() {
+    if (transAlpha <= 0) return;
+    glColor4f(0,0,0,transAlpha);
+    glBegin(GL_QUADS); glVertex2f(0,0); glVertex2f(W,0); glVertex2f(W,H); glVertex2f(0,H); glEnd();
 }
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// FEATURE 1 — Animated Sun with Corona & Rotating Rays
+// Contributor : Faysal
+// Description : Draws a glowing sun in the top-left corner of the play area.
+//               Includes a multi-layer corona halo (midpoint circles), eight
+//               rotating light rays (DDA lines), and a pulsing bright core.
+//               Visible only in ZONE_SPACE and ZONE_NEBULA so it doesn't clash
+//               with the Boss Arena or Asteroid Belt backgrounds.
+// ═══════════════════════════════════════════════════════════════════════════════
 void drawSun()
 {
     // Only show in space / nebula zones
@@ -2188,7 +2179,7 @@ void drawSun()
     float pulse = 0.5f + 0.5f * sinf(sunT * 0.08f);         // slow brightness pulse
     float pulse2 = 0.5f + 0.5f * sinf(sunT * 0.13f + 1.0f); // secondary pulse (offset)
 
-    // outer glow halo (large, very transparent)
+    // --- outer glow halo (large, very transparent) ---
     for (int r = SR + 38; r >= SR + 12; r -= 3)
     {
         float t = (r - SR - 12) / 26.0f;
@@ -2197,7 +2188,7 @@ void drawSun()
         mpc(SX, SY, r);
     }
 
-    // mid corona ring (8 concentric midpoint circles)
+    // --- mid corona ring (8 concentric midpoint circles) ---
     for (int r = SR + 11; r >= SR + 2; r--)
     {
         float t = (r - SR - 2) / 9.0f;
@@ -2206,7 +2197,7 @@ void drawSun()
         mpc(SX, SY, r);
     }
 
-    // 8 rotating light rays (DDA lines)
+    // --- 8 rotating light rays (DDA lines) ---
     int numRays = 8;
     float rayLen = 22.0f + 10.0f * pulse2;
     float rotOff = sunT * 0.012f; // slow rotation driven by sunT
@@ -2230,20 +2221,30 @@ void drawSun()
         dda(x3, y3, x4, y4);
     }
 
-    // solid bright core
+    // --- solid bright core (mpcFill) ---
     glColor3f(1.0f, 0.92f + 0.08f * pulse, 0.35f + 0.15f * pulse2);
     mpcFill(SX, SY, SR);
 
-    // hot white centre
+    // --- hot white centre ---
     glColor4f(1.0f, 1.0f, 0.85f, 0.90f + 0.10f * pulse);
     mpcFill(SX, SY, SR / 2);
 
-    // thin bright rim
+    // --- thin bright rim ---
     glColor4f(1.0f, 0.75f, 0.1f, 0.75f + 0.20f * pulse);
     mpc(SX, SY, SR);
     mpc(SX, SY, SR + 1);
 }
+// ─── END FEATURE 1 (Faysal) ─────────────────────────────────────────────────
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// FEATURE 2 — Compact Animated Moon with Craters & Phase Glow
+// Contributor : Nayeem
+// Description : Draws a small moon that orbits a fixed point in the upper-right
+//               area of the screen. The moon has a textured surface built from
+//               nested midpoint circles, three Bresenham-drawn crater outlines,
+//               and a soft phase-glow halo that pulses in sync with moonT.
+//               Visible in ZONE_SPACE and ZONE_NEBULA only.
+// ═══════════════════════════════════════════════════════════════════════════════
 void drawMoon()
 {
     if (currentZone == ZONE_ASTEROID || currentZone == ZONE_BOSS)
@@ -2260,7 +2261,7 @@ void drawMoon()
 
     float pulse = 0.5f + 0.5f * sinf(moonT * 0.12f);
 
-    // soft phase glow (large halo) ---
+    // --- soft phase glow (large halo) ---
     for (int r = MR + 16; r >= MR + 4; r -= 2)
     {
         float t = (r - MR - 4) / 12.0f;
@@ -2268,7 +2269,7 @@ void drawMoon()
         mpc(mx, my, r);
     }
 
-    // moon body fill (grey gradient using nested mpc) ---
+    // --- moon body fill (grey gradient using nested mpc) ---
     for (int r = MR; r > 0; r -= 2)
     {
         float t = 1.0f - r / (float)MR;
@@ -2279,7 +2280,7 @@ void drawMoon()
     glColor3f(0.50f, 0.50f, 0.56f);
     mpcFill(mx, my, MR - 1);
 
-    // light-side highlight (upper-left brightening via DDA band)
+    // --- light-side highlight (upper-left brightening via DDA band) ---
     for (int off = -4; off <= 4; off++)
     {
         float bright = 1.0f - fabsf(off) / 5.0f;
@@ -2308,7 +2309,19 @@ void drawMoon()
     glColor4f(0.78f, 0.80f, 0.88f, 0.55f + 0.25f * pulse);
     mpc(mx, my, MR);
 }
+// ─── END FEATURE 2 (Nayeem) ─────────────────────────────────────────────────
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// FEATURE 3 — Compact Ringed Planet with Shimmer & Bobbing Moon
+// Contributor : Eashen
+// Description : Draws a small colourful ringed planet in the lower-right area.
+//               The planet body is filled with concentric midpoint circles for a
+//               gradient look. Two ring bands cross it at an angle using
+//               Bresenham lines. A tiny companion moon orbits the planet using
+//               polar-coordinate translation. The whole object bobs gently up
+//               and down driven by compactPlanetT.
+//               Visible in ZONE_SPACE and ZONE_NEBULA only.
+// ═══════════════════════════════════════════════════════════════════════════════
 void drawCompactPlanet()
 {
     if (currentZone == ZONE_ASTEROID || currentZone == ZONE_BOSS)
@@ -2323,7 +2336,7 @@ void drawCompactPlanet()
     float pulse = 0.5f + 0.5f * sinf(compactPlanetT * 0.09f);
     float pulse2 = 0.5f + 0.5f * sinf(compactPlanetT * 0.06f + 1.5f);
 
-    // atmosphere halo
+    // --- atmosphere halo ---
     for (int r = CPR + 12; r >= CPR + 3; r -= 2)
     {
         float t = (r - CPR - 3) / 9.0f;
@@ -2332,7 +2345,7 @@ void drawCompactPlanet()
         mpc(CPX, CPY, r);
     }
 
-    // planet body gradient (concentric mpc fill)
+    // --- planet body gradient (concentric mpc fill) ---
     for (int r = CPR; r > 0; r -= 2)
     {
         float t = 1.0f - r / (float)CPR;
@@ -2345,11 +2358,11 @@ void drawCompactPlanet()
     glColor3f(0.18f, 0.42f, 0.72f);
     mpcFill(CPX, CPY, CPR - 1);
 
-    // polar cap highlight (top strip)
+    // --- polar cap highlight (top strip) ---
     glColor4f(0.55f, 0.82f, 1.0f, 0.30f + 0.15f * pulse2);
     mpcFill(CPX, CPY + CPR - 7, 5);
 
-    // ring band 1 (wider, main ring)
+    // --- ring band 1 (wider, main ring) ---
     float ringShimmer = 0.45f + 0.25f * sinf(compactPlanetT * 0.07f);
     glColor4f(0.65f, 0.75f + 0.15f * pulse, 1.0f, ringShimmer);
     for (int b = -3; b <= 3; b++)
@@ -2358,7 +2371,7 @@ void drawCompactPlanet()
         bres(CPX - halfW, CPY + b * 4, CPX + halfW, CPY + b * 4);
     }
 
-    // ring band 2 (thinner, inner)
+    // --- ring band 2 (thinner, inner) ---
     glColor4f(0.80f, 0.90f, 1.0f, (ringShimmer - 0.10f) * pulse2);
     for (int b = -1; b <= 1; b++)
     {
@@ -2366,7 +2379,7 @@ void drawCompactPlanet()
         bres(CPX - halfW, CPY + b * 4, CPX + halfW, CPY + b * 4);
     }
 
-    // re-draw planet body on top of rings (so rings go behind)
+    // --- re-draw planet body on top of rings (so rings go behind) ---
     glColor3f(0.18f, 0.42f, 0.72f);
     mpcFill(CPX, CPY, CPR);
     // restore gradient top layer
@@ -2379,11 +2392,11 @@ void drawCompactPlanet()
     glColor4f(0.55f, 0.82f, 1.0f, 0.30f + 0.15f * pulse2);
     mpcFill(CPX, CPY + CPR - 7, 5);
 
-    // thin bright rim
+    // --- thin bright rim ---
     glColor4f(0.50f, 0.80f, 1.0f, 0.60f + 0.25f * pulse);
     mpc(CPX, CPY, CPR);
 
-    // small orbiting companion moon
+    // --- small orbiting companion moon ---
     float mAng = compactPlanetT * 0.035f;
     int mmx = CPX + (int)((CPR + 16) * cosf(mAng));
     int mmy = CPY + (int)((CPR + 16) * 0.45f * sinf(mAng)); // elliptical orbit
@@ -2392,6 +2405,7 @@ void drawCompactPlanet()
     glColor4f(0.80f, 0.80f, 0.90f, 0.45f + 0.20f * pulse);
     mpc(mmx, mmy, 6);
 }
+// ─── END FEATURE 3 (Eashen) ─────────────────────────────────────────────────
 
 // Spawn Helpers
 void spawnExplosion(float x, float y, float intensity, float cr, float cg, float cb)
@@ -2898,9 +2912,6 @@ void update()
 
     planetRot += 0.5f * gameSpeed;
     blackHoleT += gameSpeed;
-    sunT += 0.7f * gameSpeed;
-    moonT += 0.4f * gameSpeed;
-    compactPlanetT += 0.3f * gameSpeed;
 
     // Player movement (2D translation)
     float tAng = 0;
@@ -3299,13 +3310,10 @@ void display()
     drawMoon();
     drawCompactPlanet();
 
-    if (showTrails)
-    {
-        for (int i = 0; i < MB; i++)
-        {
-            for (auto &n : bulletTrails[i])
-            {
-                glColor4f(0.3f, 0.9f, 1.0f, n.alpha * 0.4f);
+    if (showTrails) {
+        for (int i = 0; i < MB; i++) {
+            for (auto& n : bulletTrails[i]) {
+                glColor4f(0.3f,0.9f,1.0f,n.alpha*0.4f);
                 glPointSize(n.sz);
                 glBegin(GL_POINTS);
                 glVertex2f(n.x, n.y);
