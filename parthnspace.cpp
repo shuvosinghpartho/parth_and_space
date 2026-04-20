@@ -114,6 +114,15 @@ bool  showRadar = true, showTrails = true;
 
 float planetRot = 0.0f, blackHoleT = 0.0f;
 
+// ─── NEW FEATURE VARIABLES ───────────────────────────────────────────────────
+// Added by Faysal  : sunT  — drives sun corona pulse & ray rotation
+// Added by Nayeem  : moonT — drives compact moon orbit & crater flicker
+// Added by Eashen  : compactPlanetT — drives ringed planet ring shimmer & bob
+float sunT           = 0.0f;
+float moonT          = 0.0f;
+float compactPlanetT = 0.0f;
+// ─────────────────────────────────────────────────────────────────────────────
+
 Boss            boss;
 Bullet          bul[MB];
 Enemy           ene[ME];
@@ -1182,9 +1191,16 @@ void drawSplash() {
     }
 }
 
+// Forward declarations for new feature draw functions
+void drawSun();
+void drawMoon();
+void drawCompactPlanet();
+
 // Main Menu
 void drawMenu() {
     drawBackground(); drawNebula(); drawStars(); drawRings(); drawPlanet();
+    // NEW FEATURES visible on menu too (Faysal / Nayeem / Eashen)
+    drawSun(); drawMoon(); drawCompactPlanet();
     drawShip(W/2,170,0,1.3f);
 
     float gp = 0.5f+0.5f*sinf(menuAnim*0.05f);
@@ -1407,6 +1423,149 @@ void drawTransitionFade() {
     glColor4f(0,0,0,transAlpha);
     glBegin(GL_QUADS); glVertex2f(0,0); glVertex2f(W,0); glVertex2f(W,H); glVertex2f(0,H); glEnd();
 }
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// FEATURE 1 — Animated Sun with Corona & Rotating Rays
+// Contributor : Faysal
+// Description : Draws a glowing sun in the top-left corner of the play area.
+//               Includes a multi-layer corona halo (midpoint circles), eight
+//               rotating light rays (DDA lines), and a pulsing bright core.
+//               Visible only in ZONE_SPACE and ZONE_NEBULA so it doesn't clash
+//               with the Boss Arena or Asteroid Belt backgrounds.
+// ═══════════════════════════════════════════════════════════════════════════════
+void drawSun() {
+    // Only show in space / nebula zones
+    if (currentZone == ZONE_ASTEROID || currentZone == ZONE_BOSS) return;
+
+    const int SX = 80, SY = 610, SR = 30;   // sun centre & core radius
+    float pulse  = 0.5f + 0.5f * sinf(sunT * 0.08f);          // slow brightness pulse
+    float pulse2 = 0.5f + 0.5f * sinf(sunT * 0.13f + 1.0f);   // secondary pulse (offset)
+
+    // --- outer glow halo (large, very transparent) ---
+    for (int r = SR + 38; r >= SR + 12; r -= 3) {
+        float t = (r - SR - 12) / 26.0f;
+        glColor4f(1.0f, 0.75f + 0.15f * pulse, 0.1f,
+                  0.03f * (1.0f - t) * (0.6f + 0.4f * pulse));
+        mpc(SX, SY, r);
+    }
+
+    // --- mid corona ring (8 concentric midpoint circles) ---
+    for (int r = SR + 11; r >= SR + 2; r--) {
+        float t    = (r - SR - 2) / 9.0f;
+        float alp  = 0.18f * (1.0f - t) * (0.75f + 0.25f * pulse);
+        glColor4f(1.0f, 0.65f + 0.25f * (1.0f - t), 0.05f, alp);
+        mpc(SX, SY, r);
+    }
+
+    // --- 8 rotating light rays (DDA lines) ---
+    int numRays  = 8;
+    float rayLen = 22.0f + 10.0f * pulse2;
+    float rotOff = sunT * 0.012f;   // slow rotation driven by sunT
+    for (int i = 0; i < numRays; i++) {
+        float ang  = i * (2.0f * PI / numRays) + rotOff;
+        float ang2 = ang + (PI / numRays);                // interleaved short rays
+        // long ray
+        int x1 = SX + (int)((SR + 4)  * cosf(ang));
+        int y1 = SY + (int)((SR + 4)  * sinf(ang));
+        int x2 = SX + (int)((SR + 4 + (int)rayLen) * cosf(ang));
+        int y2 = SY + (int)((SR + 4 + (int)rayLen) * sinf(ang));
+        glColor4f(1.0f, 0.9f, 0.3f, 0.55f + 0.35f * pulse);
+        dda(x1, y1, x2, y2);
+        // short interleaved ray (half length, softer)
+        int x3 = SX + (int)((SR + 4)  * cosf(ang2));
+        int y3 = SY + (int)((SR + 4)  * sinf(ang2));
+        int x4 = SX + (int)((SR + 4 + (int)(rayLen * 0.55f)) * cosf(ang2));
+        int y4 = SY + (int)((SR + 4 + (int)(rayLen * 0.55f)) * sinf(ang2));
+        glColor4f(1.0f, 0.85f, 0.2f, 0.30f + 0.20f * pulse2);
+        dda(x3, y3, x4, y4);
+    }
+
+    // --- solid bright core (mpcFill) ---
+    glColor3f(1.0f, 0.92f + 0.08f * pulse, 0.35f + 0.15f * pulse2);
+    mpcFill(SX, SY, SR);
+
+    // --- hot white centre ---
+    glColor4f(1.0f, 1.0f, 0.85f, 0.90f + 0.10f * pulse);
+    mpcFill(SX, SY, SR / 2);
+
+    // --- thin bright rim ---
+    glColor4f(1.0f, 0.75f, 0.1f, 0.75f + 0.20f * pulse);
+    mpc(SX, SY, SR);
+    mpc(SX, SY, SR + 1);
+}
+// ─── END FEATURE 1 (Faysal) ─────────────────────────────────────────────────
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// FEATURE 2 — Compact Animated Moon with Craters & Phase Glow
+// Contributor : Nayeem
+// Description : Draws a small moon that orbits a fixed point in the upper-right
+//               area of the screen. The moon has a textured surface built from
+//               nested midpoint circles, three Bresenham-drawn crater outlines,
+//               and a soft phase-glow halo that pulses in sync with moonT.
+//               Visible in ZONE_SPACE and ZONE_NEBULA only.
+// ═══════════════════════════════════════════════════════════════════════════════
+void drawMoon() {
+    if (currentZone == ZONE_ASTEROID || currentZone == ZONE_BOSS) return;
+
+    // Orbit parameters — moon circles a point near top-right
+    const float OX    = 780.0f, OY = 600.0f;  // orbit centre
+    const float ORBIT = 55.0f;                  // orbit radius
+    const int   MR    = 18;                     // moon body radius
+
+    float ang = moonT * 0.018f;                 // orbit angle, driven by moonT
+    int   mx  = (int)(OX + ORBIT * cosf(ang));
+    int   my  = (int)(OY + ORBIT * sinf(ang));
+
+    float pulse = 0.5f + 0.5f * sinf(moonT * 0.12f);
+
+    // --- soft phase glow (large halo) ---
+    for (int r = MR + 16; r >= MR + 4; r -= 2) {
+        float t = (r - MR - 4) / 12.0f;
+        glColor4f(0.75f, 0.80f, 1.0f, 0.025f * (1.0f - t) * (0.5f + 0.5f * pulse));
+        mpc(mx, my, r);
+    }
+
+    // --- moon body fill (grey gradient using nested mpc) ---
+    for (int r = MR; r > 0; r -= 2) {
+        float t = 1.0f - r / (float)MR;
+        glColor3f(0.42f + 0.20f * t, 0.42f + 0.18f * t, 0.48f + 0.15f * t);
+        mpc(mx, my, r);
+    }
+    // solid fill pass
+    glColor3f(0.50f, 0.50f, 0.56f);
+    mpcFill(mx, my, MR - 1);
+
+    // --- light-side highlight (upper-left brightening via DDA band) ---
+    for (int off = -4; off <= 4; off++) {
+        float bright = 1.0f - fabsf(off) / 5.0f;
+        glColor4f(0.82f, 0.84f, 0.90f, 0.18f * bright);
+        dda(mx - MR + 3, my + off, mx - 2, my + off);
+    }
+
+    // --- three craters drawn with Bresenham circles ---
+    // crater 1 (large, lower-right)
+    glColor4f(0.28f, 0.28f, 0.32f, 0.70f + 0.15f * pulse);
+    mpc(mx + 6, my - 5, 5);
+    glColor4f(0.62f, 0.63f, 0.68f, 0.40f);
+    mpc(mx + 6, my - 5, 6);
+
+    // crater 2 (medium, upper area)
+    glColor4f(0.30f, 0.30f, 0.34f, 0.65f + 0.10f * pulse);
+    mpc(mx - 4, my + 7, 3);
+    glColor4f(0.60f, 0.62f, 0.66f, 0.35f);
+    mpc(mx - 4, my + 7, 4);
+
+    // crater 3 (small, centre-left)
+    glColor4f(0.32f, 0.30f, 0.35f, 0.55f);
+    mpc(mx - 6, my - 2, 2);
+
+    // --- thin bright rim to separate from background ---
+    glColor4f(0.78f, 0.80f, 0.88f, 0.55f + 0.25f * pulse);
+    mpc(mx, my, MR);
+}
+// ─── END FEATURE 2 (Nayeem) ─────────────────────────────────────────────────
+
 
 // Spawn Helpers 
 void spawnExplosion(float x, float y, float intensity, float cr, float cg, float cb) {
@@ -1681,6 +1840,12 @@ void update() {
     planetRot  += 0.5f*gameSpeed;
     blackHoleT += gameSpeed;
 
+    // ── NEW FEATURE TIMERS (Faysal / Nayeem / Eashen) ──────────────────────
+    sunT           += 0.7f * gameSpeed;   // Faysal  : sun animation clock
+    moonT          += 0.4f * gameSpeed;   // Nayeem  : moon orbit clock
+    compactPlanetT += 0.3f * gameSpeed;   // Eashen  : ringed planet clock
+    // ───────────────────────────────────────────────────────────────────────
+
     // Player movement (2D translation)
     float tAng = 0;
     if (mL) { sx -= SPDS*gameSpeed; tAng= 12; }
@@ -1885,6 +2050,12 @@ void display() {
     drawStars();
     drawRings();
     drawPlanet();
+
+    // ── NEW FEATURES (Faysal / Nayeem / Eashen) ────────────────────────────
+    drawSun();            // Feature 1 — Faysal  : animated sun with rays
+    drawMoon();           // Feature 2 — Nayeem  : orbiting moon with craters
+    drawCompactPlanet();  // Feature 3 — Eashen  : ringed planet with companion
+    // ──────────────────────────────────────────────────────────────────────
 
     if (showTrails) {
         for (int i = 0; i < MB; i++) {
