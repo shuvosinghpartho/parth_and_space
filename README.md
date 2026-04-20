@@ -238,6 +238,9 @@ The entire game — graphics primitives, game logic, AI, UI, particle system, an
 
 **Shuvo Singh Partho**
 **Nayeem Hasan**
+<br>
+**Md. Faysal Ahamed**
+<br>
 CSE422 — Computer Graphics Lab & Project
 OpenGL / FreeGLUT / C++
 
